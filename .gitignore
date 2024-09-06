@@ -1,0 +1,5 @@
+/.idea
+/.env
+/docker/var/*
+config.local.php
+docker-compose.override.yml

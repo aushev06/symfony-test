@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Swagger UI</title>
+	<link rel="stylesheet" type="text/css" href="vendors/swagger-ui/swagger-ui.css">
+	<link rel="icon" type="image/png" href="vendors/swagger-ui/favicon-32x32.png" sizes="32x32"/>
+	<link rel="icon" type="image/png" href="vendors/swagger-ui/favicon-16x16.png" sizes="16x16"/>
+	<style>
+		html {
+			box-sizing: border-box;
+			overflow: -moz-scrollbars-vertical;
+			overflow-y: scroll;
+		}
+
+		*,
+		*:before,
+		*:after {
+			box-sizing: inherit;
+		}
+
+		body {
+			margin: 0;
+			background: #fafafa;
+		}
+
+		.operation-servers {
+			display: none;
+		}
+
+		.swagger-ui .parameters-col_description input::placeholder {
+			opacity: 0.3;
+			font-size: 8.8pt;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id="swagger-ui"></div>
+
+<script src="vendors/swagger-ui/swagger-ui-bundle.js"></script>
+<script src="vendors/swagger-ui/swagger-ui-standalone-preset.js"></script>
+<script>
+	window.onload = function ()
+	{
+
+		const UncheckSendEmptyValuePlugin = function ()
+		{
+			return {
+				wrapComponents: {
+					ParameterIncludeEmpty: (Original, {React}) => (props) =>
+					{
+						props.isIncludedOptions.defaultValue = false;
+						return React.createElement(Original, props)
+					},
+					TryItOutButton: (Original, {React}) => (props) =>
+					{
+						if (props.isOAS3 && props.hasUserEditedBody) {
+							props.hasUserEditedBody = false;
+						}
+						return React.createElement(Original, props)
+					}
+				}
+			}
+		};
+
+		// Build a system
+		const ui = SwaggerUIBundle({
+			urls: [{url: './openapi.json', name: 'JSON'}, {url: './openapi.yaml', name: 'YAML'}],
+			dom_id: '#swagger-ui',
+			deepLinking: true,
+			validatorUrl: null,
+			presets: [
+				SwaggerUIBundle.presets.apis,
+				SwaggerUIStandalonePreset
+			],
+			plugins: [
+				SwaggerUIBundle.plugins.DownloadUrl,
+				UncheckSendEmptyValuePlugin
+				// DontSetParametersDefaultsPlugin
+			],
+			layout: "StandaloneLayout"
+		})
+
+		window.ui = ui
+	}
+</script>
+</body>
+
+</html>

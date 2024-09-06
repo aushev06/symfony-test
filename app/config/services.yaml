@@ -1,0 +1,53 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  EDM\Controllers\:
+    resource: '../src/Controllers'
+
+  EDM\Services\:
+    resource: '../src/Services'
+
+  EDM\Normalizers\:
+    resource: '../src/Normalizers'
+
+  EDM\EventListeners\:
+    resource: '../src/EventListeners'
+
+  EDM\DoctrineSubscribers\:
+    resource: '../src/DoctrineSubscribers'
+
+  EDM\EntityTracking\DoctrineSubscribers\:
+    resource: '../src/EntityTracking/DoctrineSubscribers'
+
+  EDM\Fixes\ObjectModelDescriber:
+    arguments:
+      $mediaTypes: [ ]
+      $propertyDescribers: !tagged_iterator nelmio_api_doc.object_model.property_describer
+      $nameConverter: '@serializer.name_converter.camel_case_to_snake_case'
+    tags: [ nelmio_api_doc.model_describer ]
+
+  EDM\Services\Aws\AwsServiceInterface:
+    class: 'EDM\Services\Aws\AwsService'
+    arguments:
+      $access_key: '%env(AWS_ACCESS_KEY)%'
+      $secret_key: '%env(AWS_SECRET_KEY)%'
+      $region: '%env(AWS_REGION)%'
+      $endpoint: '%env(AWS_ENDPOINT)%'
+
+  EDM\Services\S3\S3ServiceInterface:
+    class: 'EDM\Services\S3\S3Service'
+    arguments:
+      $bucket: '%env(AWS_S3_BUCKET)%'
+
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones

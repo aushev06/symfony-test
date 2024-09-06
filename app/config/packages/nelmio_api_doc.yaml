@@ -1,0 +1,11 @@
+nelmio_api_doc:
+  documentation:
+    openapi: 3.1.0
+    info:
+      title: Electronic Document Management System API
+      description:
+      version: 1.0.0
+
+  areas: # to filter documented areas
+    path_patterns:
+      - ^/(?!_error/)
